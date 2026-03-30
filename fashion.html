@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIENPHAM Fashion</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.cdnfonts.com/css/lemon-milk" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="courses.html" class="nav-link left-link">Courses</a>
+      <h1>KIENPHAM</h1>
+      <a href="about.html" class="nav-link about-link">About Us</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="hero" class="hero-section">
+      <div class="hero-video-wrapper">
+        <video class="hero-video-player" autoplay muted loop playsinline>
+          <source src="media/make_him_stand_202603210248.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+      <div class="hero-button-bar">
+        <button class="glass-btn" onclick="navigateTo('fashion.html')">Fashion</button>
+        <button class="glass-btn" onclick="navigateTo('grooming.html')">Grooming</button>
+        <button class="glass-btn" onclick="navigateTo('skincare.html')">Skincare</button>
+        <button class="glass-btn" onclick="navigateTo('fitness.html')">Fitness</button>
+        <button class="glass-btn" onclick="navigateTo('photography.html')">Photography</button>
+      </div>
+    </section>
+
+    <section class="landing-section">
+      <div class="landing-content">
+        <h2>Discover Fashion</h2>
+        <p>Experience the curated fashion collection and premium styling in a seamless white studio environment.</p>
+      </div>
+    </section>
+
+    <section class="landing-section">
+      <div class="landing-content">
+        <h2>Explore Fashion Courses</h2>
+        <p>Learn how to build your own signature look with expert modules.</p>
+      </div>
+    </section>
+
+    <section class="landing-section">
+      <div class="landing-content">
+        <h2>Grooming & Lifestyle</h2>
+        <p>Master fashion routines and self-care techniques for elegance and confidence.</p>
+      </div>
+    </section>
+
+    <section class="landing-section">
+      <div class="landing-content">
+        <h2>Photography & Fitness</h2>
+        <p>Build visuals and health that match your fashion brand.</p>
+      </div>
+    </section>
+
+    <section class="landing-section">
+      <div class="landing-content">
+        <h2>Fashion Ritual</h2>
+        <p>Polish your fashion routine with the science-backed fashion path.</p>
+      </div>
+    </section>
+
+    <aside id="cartPanel" class="cart-panel hidden">
+      <div class="cart-header">
+        <h3>Shopping Cart</h3>
+        <button onclick="toggleCart()" class="close-btn">✕</button>
+      </div>
+      <div id="cartItems" class="cart-items">
+        <p class="empty-cart">Your cart is empty</p>
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total">
+          <strong>Total: $<span id="cartTotal">0.00</span></strong>
+        </div>
+        <button class="checkout-btn" onclick="goToCheckout()">Proceed to Checkout</button>
+      </div>
+    </aside>
+  </main>
+
+  <div id="checkoutModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Checkout</h2>
+        <button onclick="closeCheckout()" class="close-btn">✕</button>
+      </div>
+      <form id="checkoutForm" onsubmit="processCheckout(event)">
+        <h3>Shipping Information</h3>
+        <input type="text" id="fullName" placeholder="Full Name" required>
+        <input type="email" id="email" placeholder="Email Address" required>
+        <input type="text" id="address" placeholder="Street Address" required>
+        <input type="text" id="city" placeholder="City" required>
+        <input type="text" id="zip" placeholder="ZIP Code" required>

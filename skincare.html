@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIENPHAM Skincare</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.cdnfonts.com/css/lemon-milk" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="courses.html" class="nav-link left-link">Courses</a>
+      <h1>KIENPHAM</h1>
+      <a href="about.html" class="nav-link about-link">About Us</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="hero" class="hero-section">
+      <div class="hero-video-wrapper">
+        <video class="hero-video-player" autoplay muted loop playsinline>
+          <source src="media/make_him_stand_202603210248.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+      <div class="hero-button-bar">
+        <button class="glass-btn" onclick="navigateTo('fashion.html')">Fashion</button>
+        <button class="glass-btn" onclick="navigateTo('grooming.html')">Grooming</button>
+        <button class="glass-btn" onclick="navigateTo('skincare.html')">Skincare</button>
+        <button class="glass-btn" onclick="navigateTo('fitness.html')">Fitness</button>
+        <button class="glass-btn" onclick="navigateTo('photography.html')">Photography</button>
+      </div>
+    </section>
+
+    <section class="landing-section">
+      <div class="landing-content">
+        <h2>Discover Skincare</h2>
+        <p>Experience the curated skincare collection and premium styling in a seamless white studio environment.</p>
+      </div>
+    </section>
+
+    <section class="landing-section">
+      <div class="landing-content">
+        <h2>Explore Skincare Courses</h2>
+        <p>Learn how to build your own signature skincare look with expert modules.</p>
+      </div>
+    </section>
+
+    <section class="landing-section">
+      <div class="landing-content">
+        <h2>Skincare & Lifestyle</h2>
+        <p>Master skincare routines and self-care techniques for elegance and confidence.</p>
+      </div>
+    </section>
+
+    <section class="landing-section">
+      <div class="landing-content">
+        <h2>Photography & Fitness</h2>
+        <p>Build visuals and health that match your skincare brand.</p>
+      </div>
+    </section>
+
+    <section class="landing-section">
+      <div class="landing-content">
+        <h2>Skincare Ritual</h2>
+        <p>Polish your skincare routine with the science-backed skincare path.</p>
+      </div>
+    </section>
+
+    <aside id="cartPanel" class="cart-panel hidden">
+      <div class="cart-header">
+        <h3>Shopping Cart</h3>
+        <button onclick="toggleCart()" class="close-btn">✕</button>
+      </div>
+      <div id="cartItems" class="cart-items">
+        <p class="empty-cart">Your cart is empty</p>
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total">
+          <strong>Total: $<span id="cartTotal">0.00</span></strong>
+        </div>
+        <button class="checkout-btn" onclick="goToCheckout()">Proceed to Checkout</button>
+      </div>
+    </aside>
+  </main>
+
+  <div id="checkoutModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Checkout</h2>
+        <button onclick="closeCheckout()" class="close-btn">✕</button>
+      </div>
+      <form id="checkoutForm" onsubmit="processCheckout(event)">
+        <h3>Shipping Information</h3>
+        <input type="text" id="fullName" placeholder="Full Name" required>
+        <input type="email" id="email" placeholder="Email Address" required>
+        <input type="text" id="address" placeholder="Street Address" required>
+        <input type="text" id="city" placeholder="City" required>
+        <input type="text" id="zip" placeholder="ZIP Code" required>
+
+        <h3>Payment Information</h3>
+        <input type="text" id="cardName" placeholder="Cardholder Name" required>
+        <input type="text" id="cardNumber" placeholder="Card Number (4532111111111111)" required>
+        <div class="form-row">
+          <input type="text" id="expiry" placeholder="MM/YY" required>
+          <input type="text" id="cvv" placeholder="CVV" required>
+        </div>
+
+        <div class="order-summary">
+          <h3>Order Summary</h3>
+          <div id="orderItems"></div>
+          <div class="summary-total">
+            <strong>Total: $<span id="orderTotal">0.00</span></strong>
+          </div>
+        </div>
+
+        <button type="submit" class="place-order-btn">Place Order</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="successModal" class="modal hidden">
+    <div class="modal-content success">
+      <h2>✅ Order Placed Successfully!</h2>
+      <p id="successMessage"></p>
+      <button onclick="resetStore()" class="continue-btn">Continue Shopping</button>
+    </div>
+  </div>
+
+  <audio id="ambientAudio" loop style="display: none;">
+    <source src="media/ambient.mp3" type="audio/mpeg">
+    Your browser does not support audio playback.
+  </audio>
+
+  <script>
+    const heroVideo = document.querySelector('.hero-video-player');
+    if (heroVideo) {
+      heroVideo.addEventListener('loadedmetadata', () => {
+        if (heroVideo.currentTime < 2) {
+          heroVideo.currentTime = 2;
+        }
+      });
+      heroVideo.addEventListener('seeked', () => {
+        if (heroVideo.paused) {
+          heroVideo.play().catch(() => {});
+        }
+      });
+    }
+
+    const ambientAudio = document.getElementById('ambientAudio');
+    if (ambientAudio) {
+      ambientAudio.volume = 0.45;
+      ambientAudio.play().catch(() => {
+        // If autoplay is blocked, show controls and prompt user interaction
+        ambientAudio.controls = true;
+      });
+    }
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIENPHAM Courses</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/lemon-milk" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --glass-bg: rgba(255,255,255,0.45);
+      --glass-border: rgba(255,255,255,0.7);
+      --glass-shadow: rgba(0,0,0,0.08);
+      --glass-hover: rgba(255,255,255,0.62);
+      --text-primary: rgba(30,30,40,0.92);
+      --text-secondary: rgba(60,60,80,0.6);
+      --accent: #007AFF;
+      --accent2: #5856D6;
+      --accent3: #FF2D55;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Lemon Milk', -apple-system, sans-serif;
+      color: var(--text-primary);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated gradient background */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(135deg, #e8f4fd 0%, #f0e8ff 25%, #ffe8f0 50%, #e8fff4 75%, #fff8e8 100%);
+      background-size: 400% 400%;
+      animation: bgShift 12s ease infinite;
+    }
+
+    @keyframes bgShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Floating blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      animation: blobFloat 10s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .blob-1 { width: 500px; height: 500px; background: radial-gradient(circle, #a8d8ff, #c8b4ff); top: -100px; left: -100px; animation-delay: 0s; }
+    .blob-2 { width: 400px; height: 400px; background: radial-gradient(circle, #ffb4d0, #ffcba4); top: 40%; right: -80px; animation-delay: -4s; }
+    .blob-3 { width: 350px; height: 350px; background: radial-gradient(circle, #b4ffdc, #b4e8ff); bottom: -80px; left: 30%; animation-delay: -7s; }
+
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%       { transform: translate(30px, -30px) scale(1.05); }
+      66%       { transform: translate(-20px, 20px) scale(0.97); }
+    }
+
+    /* Glass mixin */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px) saturate(1.8);
+      -webkit-backdrop-filter: blur(24px) saturate(1.8);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0.9rem 2.5rem;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(30px) saturate(2);
+      -webkit-backdrop-filter: blur(30px) saturate(2);
+      border: 1px solid rgba(255,255,255,0.75);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.9);
+      border-radius: 20px;
+      padding: 0.75rem 2rem;
+    }
+
+    .header-inner h1 {
+      font-size: 1.05rem;
+      letter-spacing: 0.22em;
+      font-weight: 600;
+      background: linear-gradient(135deg, #007AFF, #5856D6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-link {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--accent); }
+
+    /* Page */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 100px;
+    }
+
+    .page-hero {
+      text-align: center;
+      padding: 2.5rem 2rem 1rem;
+    }
+
+    .page-hero h2 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      font-family: 'Lemon Milk', sans-serif;
+    }
+
+    .page-hero p {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.08em;
+      font-family: -apple-system, sans-serif;
+      font-weight: 400;
+    }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      padding: 1.5rem 2rem 2rem;
+    }
+
+    .filter-btn {
+      font-family: 'Lemon Milk', sans-serif;
+      font-size: 0.52rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.5rem 1.4rem;
+      border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.4);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    .filter-btn:hover {
+      background: rgba(255,255,255,0.65);
+      color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0,122,255,0.12), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .filter-btn.active {
+      background: rgba(0,122,255,0.12);
+      border-color: rgba(0,122,255,0.35);
+      color: var(--accent);
+      box-shadow: 0 4px 16px rgba(0,122,255,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    /* Carousel */
+    .carousel-section {
+      width: 100%;
+      position: relative;
+      padding: 1rem 0 3rem;
+    }
+
+    .carousel-track-wrap {
+      overflow: hidden;
+      width: 100%;
+      cursor: grab;
+      user-select: none;
+      padding: 50px 0;
+    }
+
+    .carousel-track-wrap:active { cursor: grabbing; }
+
+    .carousel-track {
+      display: flex;
+      gap: 24px;
+      padding: 0 15vw;
+      will-change: transform;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    /* CARD — liquid glass */
+    .course-card {
+      flex: 0 0 250px;
+      height: 370px;
+      position: relative;
+      border-radius: 28px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.45s cubic-bezier(0.16,1,0.3,1),
+                  box-shadow 0.45s cubic-bezier(0.16,1,0.3,1);
+
+      background: rgba(255,255,255,0.42);
+      backdrop-filter: blur(28px) saturate(1.9);
+      -webkit-backdrop-filter: blur(28px) saturate(1.9);
+      border: 1px solid rgba(255,255,255,0.72);
+      box-shadow:
+        0 8px 32px rgba(0,0,0,0.07),
+        0 2px 8px rgba(0,0,0,0.04),
+        inset 0 1px 0 rgba(255,255,255,0.9),
+        inset 0 -1px 0 rgba(255,255,255,0.3);
+    }
+
+    .course-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%);
+      border-radius: 28px 28px 0 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Liquid shimmer */
+    .course-card::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -60%;
+      width: 60%; height: 200%;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%);
+      transform: rotate(0deg);
+      transition: left 0.7s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .course-card:hover::after { left: 130%; }
+
+    .course-card:hover {
+      transform: scale(1.1) translateY(-16px);
+      box-shadow:
+        0 40px 80px rgba(0,0,0,0.14),
+        0 8px 24px rgba(0,0,0,0.08),
+        0 0 0 1px rgba(255,255,255,0.8),
+        inset 0 1px 0 rgba(255,255,255,1),
+        inset 0 -1px 0 rgba(255,255,255,0.4);
+      background: var(--glass-hover);
+      z-index: 20;
+    }
+
+    .course-card.selected {
+      box-shadow:
+        0 20px 60px rgba(0,122,255,0.2),
+        0 0 0 2px rgba(0,122,255,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.9) !important;
+      background: rgba(240,247,255,0.55) !important;
+    }
+
+    /* Icon big */
+    .card-icon-bg {
+      position: absolute;
+      top: 38%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 6.5rem;
+      opacity: 0.18;
+      pointer-events: none;
+      transition: opacity 0.4s, transform 0.5s cubic-bezier(0.16,1,0.3,1);
+      z-index: 0;
+      line-height: 1;
+      filter: blur(0px);
+    }
+
+    .course-card:hover .card-icon-bg {
+      opacity: 0.32;
+      transform: translate(-50%, -55%) scale(1.15);
+    }
+
+    .course-card.selected .card-icon-bg { opacity: 0.38; }
+
+    /* Card body */
+    .card-body {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 1.4rem;
+      z-index: 3;
+      background: linear-gradient(to top,
+        rgba(255,255,255,0.75) 0%,
+        rgba(255,255,255,0.45) 55%,
+        transparent 100%);
+      border-radius: 0 0 28px 28px;
+    }
+
+    .card-cat {
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+    }
+
+    .card-title {
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      color: var(--text-primary);
+      line-height: 1.4;
+      margin-bottom: 0.28rem;
+      font-weight: 600;
+    }
+
+    .card-desc {
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      font-family: -apple-system, sans-serif;
+      margin-bottom: 0.85rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .progress-row { margin-bottom: 0.75rem; }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.48rem;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+      font-family: -apple-system, sans-serif;
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: rgba(0,0,0,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 2px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-price {
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .enroll-btn {
+      font-family: 'Lemon Milk', sans-serif;
+      font-size: 0.46rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.45rem 1rem;
+      border-radius: 50px;
+      border: 1px solid rgba(0,122,255,0.3);
+      background: rgba(0,122,255,0.08);
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+    }
+
+    .enroll-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 4px 16px rgba(0,122,255,0.3);
+    }
+
+    /* Nav */
+    .carousel-nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 0.5rem;
+    }
+
+    .nav-arrow {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--text-secondary);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .nav-arrow:hover {
+      background: rgba(0,122,255,0.1);
+      border-color: rgba(0,122,255,0.4);
+      color: var(--accent);
+      transform: scale(1.08);
+      box-shadow: 0 4px 16px rgba(0,122,255,0.15);
+    }
+
+    /* Dots */
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 1rem;
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 3px;
+      background: rgba(0,0,0,0.15);
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .dot.active {
+      width: 24px;
+      background: var(--accent);
+      border-radius: 3px;
+    }
+
+    /* Bottom panel */
+    .selected-panel {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      width: calc(100% - 4rem);
+      max-width: 860px;
+      border-radius: 24px;
+      padding: 1rem 1.6rem;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(30px) saturate(2);
+      -webkit-backdrop-filter: blur(30px) saturate(2);
+      border: 1px solid rgba(255,255,255,0.75);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.95);
+    }
+
+    .selected-panel.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .panel-info { display: flex; align-items: center; gap: 1rem; }
+    .panel-icon { font-size: 2.2rem; line-height: 1; }
+
+    .panel-name {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .panel-meta {
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-top: 0.15rem;
+      font-family: -apple-system, sans-serif;
+    }
+
+    .panel-actions { display: flex; align-items: center; gap: 0.7rem; flex-shrink: 0; }
+
+    .panel-price {
+      font-size: 1.4rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-right: 0.4rem;
+    }
+
+    .btn-cart {
+      font-family: 'Lemon Milk', sans-serif;
+      font-size: 0.52rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.65rem 1.6rem;
+      border-radius: 50px;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.6);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-cart:hover {
+      background: rgba(255,255,255,0.9);
+      color: var(--text-primary);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    .btn-enroll {
+      font-family: 'Lemon Milk', sans-serif;
+      font-size: 0.52rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.65rem 2rem;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(0,122,255,0.3);
+    }
+
+    .btn-enroll:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(0,122,255,0.4);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .course-card { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both; }
+    .course-card:nth-child(1) { animation-delay: 0.05s; }
+    .course-card:nth-child(2) { animation-delay: 0.12s; }
+    .course-card:nth-child(3) { animation-delay: 0.19s; }
+    .course-card:nth-child(4) { animation-delay: 0.26s; }
+    .course-card:nth-child(5) { animation-delay: 0.33s; }
+  </style>
+</head>
+<body>
+
+<div class="bg-canvas"></div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="nav-link">Home</a>
+    <h1>KIENPHAM</h1>
+    <a href="about.html" class="nav-link">About Us</a>
+  </div>
+</header>
+
+<div class="page-wrapper">
+  <section class="page-hero">
+    <h2>Choose Your Path</h2>
+    <p>Hover to preview · Click to select · Drag to explore</p>
+  </section>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="style">Style</button>
+    <button class="filter-btn" data-filter="body">Body</button>
+    <button class="filter-btn" data-filter="image">Image</button>
+  </div>
+
+  <div class="carousel-section">
+    <div class="carousel-track-wrap" id="trackWrap">
+      <div class="carousel-track" id="track"></div>
+    </div>
+    <div class="carousel-nav">
+      <button class="nav-arrow" id="prevBtn">&#8592;</button>
+      <button class="nav-arrow" id="nextBtn">&#8594;</button>
+    </div>
+    <div class="carousel-dots" id="dots"></div>
+  </div>
+</div>
+
+<div class="selected-panel" id="panel">
+  <div class="panel-info">
+    <div class="panel-icon" id="panelIcon"></div>
+    <div>
+      <div class="panel-name" id="panelName"></div>
+      <div class="panel-meta" id="panelMeta"></div>
+    </div>
+  </div>
+  <div class="panel-actions">
+    <span class="panel-price" id="panelPrice"></span>
+    <button class="btn-cart" onclick="addToCart()">Add to Cart</button>
+    <button class="btn-enroll" onclick="enrollNow()">Enroll Now</button>
+  </div>
+</div>
+
+<script>
+const courses = [
+  { id:101, title:'Fashion Mastery',    cat:'style', catLabel:'Style', desc:'Build a signature look. The language of clothing, silhouette, and identity.',        icon:'👗', price:29.99, progress:0,  enrolled:false },
+  { id:102, title:'Grooming Elite',     cat:'style', catLabel:'Style', desc:'Master grooming rituals, skincare fundamentals, and effortless refinement.',          icon:'💄', price:24.99, progress:45, enrolled:true  },
+  { id:103, title:'Photography Vision', cat:'image', catLabel:'Image', desc:'Develop your creative eye. Composition, light, and storytelling through a lens.',    icon:'📸', price:34.99, progress:0,  enrolled:false },
+  { id:104, title:'Fitness Protocol',   cat:'body',  catLabel:'Body',  desc:'Structured programming for strength, aesthetics, and long-term physical dominance.',  icon:'🏋️', price:39.99, progress:72, enrolled:true  },
+  { id:105, title:'Skincare Science',   cat:'body',  catLabel:'Body',  desc:'Evidence-based skincare. Ingredients, routines, and your skin biology explained.',    icon:'💆', price:27.99, progress:0,  enrolled:false }
+];
+
+const CARD_W = 250 + 24;
+let selected = null;
+let activeFilter = 'all';
+let currentIndex = 0;
+let isDragging = false, dragStartX = 0, dragDelta = 0;
+
+const track  = document.getElementById('track');
+const wrap   = document.getElementById('trackWrap');
+const panel  = document.getElementById('panel');
+const dotsEl = document.getElementById('dots');
+
+function getFiltered() {
+  return activeFilter === 'all' ? courses : courses.filter(c => c.cat === activeFilter);
+}
+
+function buildCards() {
+  track.innerHTML = '';
+  dotsEl.innerHTML = '';
+  const list = getFiltered();
+  currentIndex = Math.min(currentIndex, Math.max(0, list.length - 1));
+
+  list.forEach((c, i) => {
+    const card = document.createElement('div');
+    card.className = 'course-card glass' + (selected?.id === c.id ? ' selected' : '');
+    card.innerHTML = `
+      <div class="card-icon-bg">${c.icon}</div>
+      <div class="card-body">
+        <div class="card-cat">${c.catLabel}</div>
+        <div class="card-title">${c.title}</div>
+        <div class="card-desc">${c.desc}</div>
+        ${c.enrolled ? `<div class="progress-row">
+          <div class="progress-labels"><span>Progress</span><span>${c.progress}%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${c.progress}%"></div></div>
+        </div>` : ''}
+        <div class="card-footer">
+          <div class="card-price">$${c.price.toFixed(2)}</div>
+          <button class="enroll-btn" onclick="event.stopPropagation()">${c.enrolled ? 'Continue' : 'Enroll'}</button>
+        </div>
+      </div>`;
+    card.addEventListener('click', () => selectCourse(c));
+    track.appendChild(card);
+
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === currentIndex ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(dot);
+  });
+
+  applyTransform(false);
+}
+
+function applyTransform(animate) {
+  track.style.transition = animate ? 'transform 0.5s cubic-bezier(0.16,1,0.3,1)' : 'none';
+  const wrapW = wrap.offsetWidth;
+  const offset = wrapW / 2 - CARD_W * currentIndex - 125;
+  track.style.transform = `translateX(${offset}px)`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+}
+
+function goTo(i) {
+  const list = getFiltered();
+  currentIndex = Math.max(0, Math.min(i, list.length - 1));
+  applyTransform(true);
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(currentIndex - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(currentIndex + 1));
+
+wrap.addEventListener('mousedown', e => { isDragging = true; dragStartX = e.clientX; track.style.transition = 'none'; });
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  dragDelta = e.clientX - dragStartX;
+  const base = wrap.offsetWidth / 2 - CARD_W * currentIndex - 125;
+  track.style.transform = `translateX(${base + dragDelta}px)`;
+});
+window.addEventListener('mouseup', () => {
+  if (!isDragging) return;
+  isDragging = false;
+  if (dragDelta < -60) goTo(currentIndex + 1);
+  else if (dragDelta > 60) goTo(currentIndex - 1);
+  else applyTransform(true);
+  dragDelta = 0;
+});
+wrap.addEventListener('touchstart', e => { dragStartX = e.touches[0].clientX; track.style.transition = 'none'; }, { passive: true });
+wrap.addEventListener('touchmove', e => {
+  dragDelta = e.touches[0].clientX - dragStartX;
+  const base = wrap.offsetWidth / 2 - CARD_W * currentIndex - 125;
+  track.style.transform = `translateX(${base + dragDelta}px)`;
+}, { passive: true });
+wrap.addEventListener('touchend', () => {
+  if (dragDelta < -60) goTo(currentIndex + 1);
+  else if (dragDelta > 60) goTo(currentIndex - 1);
+  else applyTransform(true);
+  dragDelta = 0;
+});
+
+window.addEventListener('resize', () => applyTransform(false));
+
+function selectCourse(c) {
+  selected = c;
+  buildCards();
+  document.getElementById('panelIcon').textContent = c.icon;
+  document.getElementById('panelName').textContent = c.title;
+  document.getElementById('panelMeta').textContent = c.catLabel + '  ·  ' + (c.enrolled ? c.progress + '% complete' : 'Not enrolled');
+  document.getElementById('panelPrice').textContent = '$' + c.price.toFixed(2);
+  panel.classList.add('visible');
+}
+
+function enrollNow() {
+  if (!selected) return;
+  const c = courses.find(x => x.id === selected.id);
+  if (c && !c.enrolled) { c.enrolled = true; c.progress = 0; }
+  alert('Enrolled in ' + selected.title + '!');
+  buildCards();
+}
+
+function addToCart() {
+  if (!selected) return;
+  if (typeof addToCartGlobal === 'function') addToCartGlobal(selected.id, selected.title, selected.price);
+  else alert(selected.title + ' added to cart — $' + selected.price.toFixed(2));
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    currentIndex = 0;
+    selected = null;
+    panel.classList.remove('visible');
+    buildCards();
+  });
+});
+
+buildCards();
+</script>
+<script src="script.js"></script>
+</body>
+</html>
